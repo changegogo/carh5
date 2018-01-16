@@ -12,23 +12,30 @@ game_state.main.prototype = {
     // 最先被调用，主要加载图片音频资源
     preload: function() { 
         this.game.stage.backgroundColor = '#71c5cf';
-        this.game.load.image('bird', 'assets/bird.png');
+        this.game.load.image('car', 'assets/bird.png');
         this.game.load.image('obstacle', 'assets/pipe.png');
-        var s = this.game.load.image('star', 'assets/star.png');
+        this.game.load.image('star', 'assets/star.png');
+        
+        game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     },
     create: function() {
     	// 开启物理世界
     	game.physics.startSystem(Phaser.Physics.ARCADE);
     	
-        this.car = this.game.add.sprite(0,0,'bird');
+        //this.car = this.game.add.sprite(0,0,'car');
+        this.car = this.game.add.sprite(32, game.world.height - 150, 'dude');
         var carWidth = this.car.width;
         var carHeight = this.car.height;
         // 设置car位置
         var posX = game.world.width * (1-(5-(1*2))/6) - carWidth / 2;
-	  	var posY = game.world.height - carHeight;
+	  	var posY = game.world.height - carHeight - carHeight / 3;
         this.car.x = posX;
         this.car.y = posY;
         game.physics.arcade.enable(this.car);
+        // 创建动画
+    	this.car.animations.add('left', [0, 1, 2, 3], 10, true);
+  		this.car.animations.add('right', [5, 6, 7, 8], 10, true);
+  		this.car.animations.play('left');
         
         // 创建一个group，包含20个障碍物
         this.obstacles = game.add.group();
@@ -154,13 +161,15 @@ game_state.main.prototype = {
     		this.score = 0;
     	}
         this.scoreText.text = '分数: ' + this.score;  
+         this.car.animations.play('right');
     },
     eatStarFunc: function(car, star){
     	star.kill();
     	console.log("吃到奖励+加分");
     	
     	this.score += 1;
-        this.scoreText.text = '分数: ' + this.score;  
+        this.scoreText.text = '分数: ' + this.score; 
+        this.car.animations.play('left');
     }
 };
 
